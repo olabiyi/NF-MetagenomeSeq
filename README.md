@@ -151,7 +151,14 @@ nextflow run low_biomass_nanopore.nf --help
 ##### 4ai. Approach 1: Start with pod5 or fast5 files as input
 
 ```bash
-nextflow run low_biomass_nanopore.nf -resume -profile singularity --input_file input_dir_barcodes.csv --input_type "directory"  --input_dir /path/to/pod5/directory/  --kit_name "SQK-RPB114-24" --isFast5 false --errorStrategy "ignore"
+nextflow run low_biomass_nanopore.nf -resume \
+    -profile singularity \
+    --input_file input_dir_barcodes.csv \
+    --input_type "directory"  \
+    --input_dir /path/to/pod5/directory/  \
+    --kit_name "SQK-RPB114-24" \
+    --isFast5 false \
+    --errorStrategy "ignore"
 ```
 
 <br>
@@ -159,7 +166,11 @@ nextflow run low_biomass_nanopore.nf -resume -profile singularity --input_file i
 ##### 4aii. Approach 2: Start with multiple FASTQ files per sample as input
 
 ```bash
-nextflow run low_biomass_nanopore.nf -resume -profile singularity --input_file multiple.csv --input_type "multiple" --errorStrategy "ignore"
+nextflow run low_biomass_nanopore.nf -resume \
+    -profile singularity \
+    --input_file multiple.csv \
+    --input_type "multiple" \
+    --errorStrategy "ignore"
 ```
 
 <br>
@@ -167,7 +178,11 @@ nextflow run low_biomass_nanopore.nf -resume -profile singularity --input_file m
 ##### 4aiii. Approach 3: Start with one FASTQ file per sample as input
 
 ```bash
-nextflow run low_biomass_nanopore.nf -resume -profile singularity --input_file single.csv --input_type "single" --errorStrategy "ignore"
+nextflow run low_biomass_nanopore.nf -resume \
+    -profile singularity \
+    --input_file single.csv \
+    --input_type "single" \
+    --errorStrategy "ignore"
 ```
 
 <br>
@@ -208,7 +223,11 @@ nextflow run low_biomass_illumina.nf --help
 ##### 4bi. Approach 1: Start with paired-end FASTQ files as input
 
 ```bash
-nextflow run low_biomass_illumina.nf -resume -profile singularity  --input_file PE_file.csv --errorStrategy "ignore" --technology "illumina"
+nextflow run low_biomass_illumina.nf -resume \
+    -profile singularity  \
+    --input_file PE_file.csv \
+    --errorStrategy "ignore" \
+    --technology "illumina"
 ```
 
 <br>
@@ -216,7 +235,11 @@ nextflow run low_biomass_illumina.nf -resume -profile singularity  --input_file 
 ##### 4bii. Approach 2: Start with single-end FASTQ files as input
 
 ```bash
-nextflow run low_biomass_illumina.nf  -resume -profile singularity --input_file SE_file.csv --errorStrategy "ignore" --technology "illumina"
+nextflow run low_biomass_illumina.nf -resume \
+    -profile singularity \
+    --input_file SE_file.csv \
+    --errorStrategy "ignore" \
+    --technology "illumina"
 ```
 
 <br>
@@ -332,7 +355,13 @@ For instructions on how to setup Sequera Platforms please see the documentation 
 
 ```bash
 export TOWER_ACCESS_TOKEN=eyxxxxxxxxxxxxxxxQ1ZTE=
-nextflow run low_biomass_nanopore.nf -resume -with-tower -profile singularity --input_file single.csv --input_type "single" --errorStrategy "ignore"
+# Example command for the Nanopre Approach 3 using Nextflow tower
+nextflow run low_biomass_nanopore.nf -resume \
+    -with-tower \
+    -profile singularity \
+    --input_file single.csv \
+    --input_type "single" \
+    --errorStrategy "ignore"
 ```
 
 > *Note: These helper scripts [launch.sh](launch.sh) and [launch.slurm](launch.slurm) can be used to launch the workflow from anywhere and to submit your run to seqera platforms for workflow monitoring. Please see the scripts on how to run them after setting the required paths, parameters and variables.* 

@@ -11,7 +11,7 @@ set  -euo pipefail
 
 # Postprocessing:  
 #      bash ./launch.sh post_processing  path/to/post_processing.nf  path/to/post_processing.config \
-#           '--name Olabiyi A. Obayomi --email olabiyi.a.obayomi@nasa.gov --GLDS_accession GLDS-574 --OSD_accession OSD-574 --isa_zip  ../GeneLab/OSD-574_metadata_GLDS-574-ISA.zip --runsheet ../GeneLab/GLfile.csv' 
+#           '--name First M. Last --email myemail@gmail.com --GLDS_accession GLDS-574 --OSD_accession OSD-574 --isa_zip  ../GeneLab/OSD-574_metadata_GLDS-574-ISA.zip --runsheet ../GeneLab/GLfile.csv' 
 
 
 
