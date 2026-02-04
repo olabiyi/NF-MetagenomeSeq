@@ -23,7 +23,7 @@ process BUILD_HOSTDB {
 
     input:
         tuple val(host_name), val(host_url) , path(host_fasta)
- 
+
     output:
         path("kraken2-${host_name}-db/"), emit: krakendb_dir
         path("versions.txt"), emit: version
@@ -32,17 +32,17 @@ process BUILD_HOSTDB {
         """
         # Download and unpack database from URL
         if [ "${host_url}" != 'null' ]; then
-      
+
              echo "Downloading and unpacking database from ${host_url}"
              wget -O ${host_name}.tar.gz --timeout=3600 --tries=0 --continue  ${host_url}
 
-             mkdir kraken2-${host_name}-db/ && tar -zxvf -C kraken2-${host_name}-db/ && \\
+             mkdir kraken2-${host_name}-db/ && tar -zxvf ${host_name}.tar.gz -C kraken2-${host_name}-db/ && \\
 
             # Cleaning up
             [ -f  ${host_name}.tar.gz ] && rm -rf  ${host_name}.tar.gz
 
         # Build custome host reference
-        elif [ "${host_fasta}" != 'null' ]; then
+        elif [ "${host_fasta.name}" != 'empty.txt' ]; then
 
             echo "Attempting to build a custome ${host_name} reference database from ${host_fasta}"
 
@@ -51,16 +51,16 @@ process BUILD_HOSTDB {
                 echo "${host_fasta} does not exist. please supply a valid fasta file and try again"
                 exit 1
 
-            fi 
+            fi
 
-            # Install taxonomy       
+            # Install taxonomy
             kraken2-build --download-taxonomy --db kraken2-${host_name}-db/
             # Add sequence to your database's genomic library
             kraken2-build --add-to-library ${host_fasta} \\
                           --db kraken2-${host_name}-db/ --no-masking
             # Once your library is finalized, you need to build the database
             kraken2-build --build --db kraken2-${host_name}-db/
-   
+
         # Build reference from named host e.g human
         elif [ "${host_name}" != 'null' ];then
 
@@ -74,7 +74,7 @@ process BUILD_HOSTDB {
                           --threads ${task.cpus}
             kraken2-build --clean --db kraken2-${host_name}-db/
 
-    
+
         else
 
             echo "Input error! host_name, host_url and host_fasta are all set to null"
@@ -84,7 +84,7 @@ process BUILD_HOSTDB {
         fi
 
     VERSION=`echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//'`
-    echo "kraken2 \${VERSION}"  > versions.txt    
+    echo "kraken2 \${VERSION}"  > versions.txt
     """
 }
 
@@ -158,11 +158,11 @@ workflow remove_host {
 
 
     main:
-       
+
        // Initialize software versions channel
        software_versions_ch = Channel.empty()
 
-       // Use user supplied database path 
+       // Use user supplied database path
        if ( host_db_dir ){
 
             host_db = Channel.fromPath(host_db_dir, checkIfExists: true)
@@ -170,7 +170,8 @@ workflow remove_host {
        // Build database if path to existing database isn't supplied
        }else{
 
-           input_ch = Channel.of([host_name, host_url , host_fasta])
+           fasta = file_path = host_fasta ?: file('empty.txt')
+           input_ch = Channel.of([host_name, host_url , fasta])
            BUILD_HOSTDB(input_ch)
            host_db =  BUILD_HOSTDB.out.krakendb_dir
            BUILD_HOSTDB.out.version | mix(software_versions_ch) | set{software_versions_ch}
@@ -180,9 +181,10 @@ workflow remove_host {
 
        // Collect software versions
        REMOVE_HOST.out.version | mix(software_versions_ch) | set{software_versions_ch}
-     
+
     emit:
-        clean_reads = REMOVE_HOST.out.reads
+        clean_reads  = REMOVE_HOST.out.reads
         logs         =  REMOVE_HOST.out.report
-        versions    = software_versions_ch
+        versions     = software_versions_ch
 }
+    

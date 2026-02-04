@@ -30,7 +30,7 @@ process SETUP_CAT_DB {
         """
         printf "### Setting up CAT's reference database ###\\n\\n"
         printf "  Downloading reference db:\\n\\n"
-        curl -L -C - -o CAT_prepare_20210107.tar.gz ${CAT_DB_LINK}
+        curl -kLC - -o CAT_prepare_20210107.tar.gz ${CAT_DB_LINK}
 
         printf "\\n\\n  Extracting reference db:\\n\\n"
         tar -xvzf CAT_prepare_20210107.tar.gz
@@ -60,19 +60,19 @@ process SETUP_KOFAMSCAN_DB {
 
         printf "\\n  Downloading ko_list file:\\n\\n"
 
-        if ! curl -L -C - --connect-timeout 15 -o ko_list.gz ftp://ftp.genome.jp/pub/db/kofam/ko_list.gz 
+        if ! curl -kLC - --connect-timeout 15 -o ko_list.gz ftp://ftp.genome.jp/pub/db/kofam/ko_list.gz 
         then
             printf "\\n\\n  Downloading via http since ftp seemed to fail making the connection:\\n\\n"
-            curl -L -C - -o ko_list.gz https://www.genome.jp/ftp/db/kofam/ko_list.gz
+            curl -kLC - -o ko_list.gz https://www.genome.jp/ftp/db/kofam/ko_list.gz
         fi
 
         printf "\\n\\n  Downloading profiles.tar.gz file:\\n\\n"
 
 
-        if ! curl -L -C - --connect-timeout 15 -o profiles.tar.gz ftp://ftp.genome.jp/pub/db/kofam/profiles.tar.gz
+        if ! curl -kLC - --connect-timeout 15 -o profiles.tar.gz ftp://ftp.genome.jp/pub/db/kofam/profiles.tar.gz
         then
             printf "\\n\\n  Downloading via http since ftp seemed to fail making the connection:\\n\\n"
-            curl -L -C - -o profiles.tar.gz https://www.genome.jp/ftp/db/kofam/profiles.tar.gz
+            curl -kLC - -o profiles.tar.gz https://www.genome.jp/ftp/db/kofam/profiles.tar.gz
         fi
 
        [ -d kofamscan_db/ ] || mkdir kofamscan_db/
@@ -243,6 +243,7 @@ process SETUP_KAIJU {
 
     output:
         path("kaiju-db/"), emit: kaijudb_dir
+        path("kaiju-db/KAIJU_DB_SETUP"), emit: completion_indicator
         path("versions.txt"), emit: version
 
     script:
@@ -250,15 +251,17 @@ process SETUP_KAIJU {
         printf "### Setting up Kaiju's reference database ###\\n\\n"
         printf "  Downloading reference db:\\n\\n"
 
-        mkdir kaiju-db/
-        kaiju-makedb -s kaiju-db/${dbname} -t ${task.cpus}  && \\
-        rm kaijudb/nr_euk/kaiju_db_${dbname}.bwt kaiju-db/${dbname}/kaiju_db_${dbname}.sa
+        mkdir kaiju-db/ && cd kaiju-db/
+        kaiju-makedb -s ${dbname} -t ${task.cpus}  && \\
+        rm nr_euk/kaiju_db_${dbname}.bwt ${dbname}/kaiju_db_${dbname}.sa && \\
         touch kaiju-db/KAIJU_DB_SETUP
+
+        cd ..
 
         printf "### Set up completed successfully ###\\n\\n"
 
         VERSION=`kaiju -h 2>&1 | sed -n 1p | sed 's/^.*Kaiju //'`
-        echo kaiju \${VERSION} > versions.txt   
+        echo kaiju \${VERSION} > versions.txt
         """
 }
 
@@ -278,16 +281,17 @@ process SETUP_KRAKEN {
 
     input:
         val(url)
- 
+
     output:
         path("kraken2-db/"), emit: krakendb_dir
+        path("kraken2-db/KRAKEN_DB_SETUP"), emit: completion_indicator
         path("versions.txt"), emit: version
 
     script:
         """
         printf "### Setting up kraken database ###\\n\\n"
         printf "  Downloading reference db:\\n\\n"
-      
+
         echo "Downloading and unpacking database from ${url}"
         wget -O kraken.tar.gz --timeout=3600 --tries=0 --continue  ${url}
 
@@ -299,10 +303,9 @@ process SETUP_KRAKEN {
        printf "### Set up completed successfully ###\\n\\n"
        touch  kraken2-db/KRAKEN_DB_SETUP
        VERSION=`echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//'`
-       echo kraken2 \${VERSION}  > versions.txt    
+       echo kraken2 \${VERSION}  > versions.txt
     """
 }
-
 
 
 

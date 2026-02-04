@@ -416,7 +416,7 @@ workflow {
          // sample_id to barcode_id column in --input_file
         
         file_ch.map{  row ->
-                   "${row.sample_id},${row.barcode}"
+                   "${row.sample_id},${row.barcode_id}"
               }
               .collectFile(name: "sample2barcode_file.csv", newLine: true, sort:false)
               .set{sample2barcode}
