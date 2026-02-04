@@ -338,21 +338,27 @@ workflow make_databases {
     take:
         CAT_DB_LINK
         GTDBTK_URL
+        KAIJUDB_NAME // nr_euk
+        KRAKEN_URL
 
     main:
         SETUP_CAT_DB(CAT_DB_LINK)
         SETUP_KOFAMSCAN_DB()
         SETUP_GTDBTK_DB(GTDBTK_URL)
+        SETUP_KAIJU(KAIJUDB_NAME)
+        SETUP_KRAKEN(KRAKEN_URL)
         make_humann_db()
 
         software_versions_ch = Channel.empty()
         SETUP_CAT_DB.out.version | mix(software_versions_ch) | set{software_versions_ch}
         SETUP_KOFAMSCAN_DB.out.version | mix(software_versions_ch) | set{software_versions_ch}
         SETUP_GTDBTK_DB.out.version | mix(software_versions_ch) | set{software_versions_ch}
+        SETUP_KAIJU.out.version | mix(software_versions_ch) | set{software_versions_ch}
+        SETUP_KRAKEN.out.version | mix(software_versions_ch) | set{software_versions_ch}
         make_humann_db.out.versions | mix(software_versions_ch) | set{software_versions_ch}
 
-        
-   
+
+
     emit:
         cat_db = SETUP_CAT_DB.out.cat_db
         kofam_db = SETUP_KOFAMSCAN_DB.out.ko_db_dir
@@ -361,6 +367,8 @@ workflow make_databases {
         uniref_dir = make_humann_db.out.uniref_dir
         metaphlan_db_dir = make_humann_db.out.metaphlan_db_dir
         utilities_dir = make_humann_db.out.utilities_dir
+        kraken_dir = SETUP_KRAKEN.out.krakendb_dir
+        kaiju_dir = SETUP_KAIJU.out.kaijudb_dir
         versions = software_versions_ch
 
     }
@@ -368,5 +376,7 @@ workflow make_databases {
 
 
 workflow {
-     make_databases(Channel.of(params.CAT_DB_LINK), Channel.of(params.GTDBTK_LINK))
+     make_databases(Channel.of(params.CAT_DB_LINK), Channel.of(params.GTDBTK_LINK),
+                    params.kaijudb_name, Channel.of(params.krakendb_url))
 }
+       
