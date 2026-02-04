@@ -329,15 +329,19 @@ workflow read_based {
 
         // -------------------- Kaiju
         if(kaijudb_dir){
-           KAIJU_CLASSIFY(kaijudb_dir, filtered_reads)
+           kaijuDB = kaijudb_dir
+           KAIJU_CLASSIFY(kaijuDB, filtered_reads)
         }else{
             SETUP_KAIJU(params.kaijudb_name)
             KAIJU_CLASSIFY(SETUP_KAIJU.out.kaijudb_dir, filtered_reads)
+            kaijuDB = SETUP_KAIJU.out.kaijudb_dir
             SETUP_KAIJU.out.version | mix(software_versions_ch) | set{software_versions_ch}
         }
         kaiju_reports = KAIJU_CLASSIFY.out.report.map{sample_id, report -> report}.collect()
-        KAIJU2TABLE(params.kaijudb_dir, "species", kaiju_reports)
-        KAIJU2KRONA(params.kaijudb_dir, KAIJU_CLASSIFY.out.report)
+        KAIJU2TABLE(kaijuDB, "species", kaiju_reports)
+        KAIJU2KRONA(kaijuDB, KAIJU_CLASSIFY.out.report)
+        KAIJU_REPORT("kaiju", KAIJU2KRONA.out.krona.collect())
+
         KAIJU_REPORT("kaiju", KAIJU2KRONA.out.krona.collect())
         // Unfiltered
         KAIJU2SPECIES_TABLE(KAIJU2TABLE.out.table)
