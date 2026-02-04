@@ -254,7 +254,7 @@ process SETUP_KAIJU {
         mkdir kaiju-db/ && cd kaiju-db/
         kaiju-makedb -s ${dbname} -t ${task.cpus}  && \\
         rm nr_euk/kaiju_db_${dbname}.bwt ${dbname}/kaiju_db_${dbname}.sa && \\
-        touch kaiju-db/KAIJU_DB_SETUP
+        touch KAIJU_DB_SETUP
 
         cd ..
 
