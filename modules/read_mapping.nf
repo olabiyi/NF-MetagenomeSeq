@@ -10,6 +10,7 @@ process MAPPING {
 
     tag "Mapping ${sample_id}-s reads to its assembly ${assembly}..."
     label "mapping"
+    label "bowtie2"
 
     input:
         tuple val(sample_id), path(assembly), path(reads), val(isPaired)
@@ -64,6 +65,7 @@ process MAPPING {
 process LONG_MAPPING {
 
     tag "Mapping ${sample_id}-s reads to its assembly ${assembly}..."
+    label "minimap2"
     label "mapping"
 
     input:
@@ -99,7 +101,7 @@ process LONG_MAPPING {
 process SAM_TO_BAM {
 
     tag "Sorting and converting ${sample_id}-s sam to bam files..."
-    label "mapping"
+    label "samtools"
 
     input:
         tuple val(sample_id), path(sam), path(mapping_info)

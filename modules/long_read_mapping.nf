@@ -9,7 +9,7 @@ nextflow.enable.dsl = 2
 process MINIMAP_INDEX {
 
     tag "Building ${sample_id}-s index..."
-    label "mapping"
+    label "minimap2"
 
     input:
         tuple val(sample_id), path(assembly)
@@ -30,7 +30,9 @@ process MINIMAP_INDEX {
 process LONG_MAPPING {
 
     tag "Mapping ${sample_id}-s reads to its assembly ${assembly}..."
+    label "minimap2"
     label "mapping"
+    
 
     input:
         tuple val(sample_id), path(assembly), path(reads)

@@ -8,8 +8,6 @@ nextflow.enable.dsl = 2
 // a 2-column (single-end) or 3-column (paired-end) file
 //params.prefix = "raw" // "filtered"
 //params.csv_file = "file.csv" 
-//params.swift_1S = false
-//params.adapters = "${projectDir}/config/bbtools_dapters.fa"
 //params.multiqc_config = "config/multiqc.config"
 
 process FASTQC {
@@ -134,46 +132,6 @@ process ZIP_MULTIQC {
         """
 }
 
-
-//  This process runs quality filtering/trimming on input fastq files.
-process BBDUK {
-
-
-    tag "Quality filtering ${sample_id}-s reads.."
-    beforeScript "chmod +x ${projectDir}/bin/*"
-    label "bbtools"
-
-    input:
-        tuple val(sample_id), path(reads), val(isPaired)
-        path(adapters)
-    output:
-        tuple val(sample_id), path("*${params.filtered_suffix}"), val(isPaired), emit: reads
-        path("${sample_id}-bbduk.log"), emit: log
-        path("versions.txt"), emit: version
-    script:
-    def isSwift = params.swift_1S ? 't' : 'f'
-    """
-    if [ ${isPaired} == true ];then
-
-        bbduk.sh in=${reads[0]} in2=${reads[1]} \\
-                 out1=${sample_id}${params.filtered_R1_suffix} \\
-                 out2=${sample_id}${params.filtered_R2_suffix} \\
-                 ref=${adapters} \\
-                 ktrim=l k=17 ftm=5 qtrim=rl \\
-                 trimq=10 mlf=0.5 maxns=0 swift=${isSwift} > ${sample_id}-bbduk.log 2>&1
-    else
-
-        bbduk.sh in=${reads[0]} out1=${sample_id}${params.filtered_suffix} \\
-                  ref=${adapters} \\
-				  ktrim=l k=17 ftm=5 qtrim=rl \\
-                  trimq=10 mlf=0.5 maxns=0 swift=${isSwift} > ${sample_id}-bbduk.log 2>&1
-
-    fi    
-
-    VERSION=`bbversion.sh`
-    echo "bbtools \${VERSION}" > versions.txt
-    """
-}
 
 
 //Adapter trimming and filtering for short reads 
@@ -363,5 +321,4 @@ workflow {
                .set{reads_ch}   
 
     res_ch = quality_check(Channel.of(params.prefix), params.multiqc_config, reads_ch)
-    BBDUK(reads_ch, params.adapters)
 }

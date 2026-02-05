@@ -108,7 +108,7 @@ process FLYE {
 process BUILD_CONTAMINANT_DB {
 
     tag "Building a contaminant Database from blank samples"
-    label "remove_contaminant"
+    label "bowtie2"
 
     input:
         path(FASTA)
@@ -132,7 +132,7 @@ process BUILD_CONTAMINANT_DB {
 process BUILD_CONTAMINANT_INDEX {
 
     tag "Building a contaminant index from blank samples"
-    label "mapping"
+    label "minimap2"
 
     input:
         path(FASTA) // blank assembly
@@ -152,7 +152,7 @@ process BUILD_CONTAMINANT_INDEX {
 process REMOVE_CONTAMINANT {
 
     tag "Removing reads mapping to the blanks assembly.."
-    label "remove_contaminant"
+    label "bowtie2"
 
     input:
         each path(BLANKS_DB)
@@ -200,7 +200,8 @@ process REMOVE_CONTAMINANT {
 process MAPPING_TO_CONTAMINANT {
 
     tag "mapping reads to the blanks assembly..."
-    label "mapping"
+    label "minimap2"
+    
 
     input:
         each path(BLANKS_DB)
