@@ -10,7 +10,8 @@ nextflow.enable.dsl = 2
 process GET_COV_AND_DET {
 
     tag "Calculating gene and contig coverage for ${sample_id}..."
-
+    label "bbtools"
+ 
     input:
         tuple val(sample_id), path(bam), path(assembly), path(aa), path(nt)
     output:
