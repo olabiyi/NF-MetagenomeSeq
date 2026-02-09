@@ -19,6 +19,7 @@ process SETUP_CAT_DB {
 
     tag "Downloading and setting up contig annotation tool-s (CAT) database..."
     label "db_setup"
+    label "bit" // unix environment
 
     input:
         val(CAT_DB_LINK)
@@ -47,6 +48,7 @@ process SETUP_KOFAMSCAN_DB {
 
     tag "Downloading and setting up kofam scan-s database..."
     label "db_setup"
+    label "bit" // unix environment
 
     output:
         path("kofamscan_db/"), emit: ko_db_dir
@@ -93,6 +95,7 @@ process SETUP_GTDBTK_DB {
 
     tag "Downloading and setting up genome taxonomy database toolkit-s (GTDBTK) database..."
     label "db_setup"
+    label "bit" // unix environment
 
     input:
         val(GTDBTK_URL)
@@ -276,7 +279,7 @@ https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_20250714.tar.gz
 process SETUP_KRAKEN {
 
     tag "Building kraken database..."
-    label "kraken2"
+    label "bit" // unix environment
     label "db_setup"
 
     input:
