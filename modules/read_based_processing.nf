@@ -342,7 +342,6 @@ workflow read_based {
         KAIJU2KRONA(kaijuDB, KAIJU_CLASSIFY.out.report)
         KAIJU_REPORT("kaiju", KAIJU2KRONA.out.krona.collect())
 
-        KAIJU_REPORT("kaiju", KAIJU2KRONA.out.krona.collect())
         // Unfiltered
         KAIJU2SPECIES_TABLE(KAIJU2TABLE.out.table)
         unfilt_kaiju_barplot_meta = Channel.of([group: "group",
