@@ -75,15 +75,19 @@ process MAKE_COMBINED_GENE_LEVEL_TABLES {
         bit-GL-combine-KO-and-tax-tables ${gene_coverage_annotation_and_tax_files} -o ${params.additional_filename_prefix}Combined
 
         # Renaming to have GL assay-specific suffix
+        [ -f "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages.tsv" \\
            "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages${params.assay_suffix}.tsv"
 
+        [ -f "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages-CPM${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages-CPM.tsv" \\
            "${params.additional_filename_prefix}Combined-gene-level-KO-function-coverages-CPM${params.assay_suffix}.tsv"
 
+        [ -f "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages.tsv" \\
            "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages${params.assay_suffix}.tsv"
 
+        [ -f "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages-CPM${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages-CPM.tsv" \\
            "${params.additional_filename_prefix}Combined-gene-level-taxonomy-coverages-CPM${params.assay_suffix}.tsv"
         bit-version |grep "Bioinformatics Tools"|sed -E 's/^\\s+//' > versions.txt
@@ -167,9 +171,11 @@ process MAKE_COMBINED_CONTIG_TAX_TABLES {
         bit-GL-combine-contig-tax-tables ${contig_coverage_and_tax_files} -o ${params.additional_filename_prefix}Combined
 
         # Renaming to have GL assay-specific suffix
+        [ -f "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages.tsv" \\
            "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages${params.assay_suffix}.tsv"
 
+        [ -f "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages-CPM${params.assay_suffix}.tsv" ] || \\
         mv "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages-CPM.tsv" \\
            "${params.additional_filename_prefix}Combined-contig-level-taxonomy-coverages-CPM${params.assay_suffix}.tsv"
         bit-version |grep "Bioinformatics Tools"|sed -E 's/^\\s+//' > versions.txt
